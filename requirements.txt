@@ -1,9 +1,13 @@
 # Common dependencies for all frameworks
-openai>=1.12.0
 pydantic>=2.6.0
 pydantic-settings>=2.1.0
 requests>=2.31.0
 python-dotenv>=1.0.0
+
+# AWS Bedrock (Required)
+boto3>=1.34.0
+botocore>=1.34.0
+# Note: langchain-aws is installed in framework-specific requirements
 
 # Logging and monitoring
 python-json-logger>=2.0.7

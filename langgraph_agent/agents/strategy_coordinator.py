@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain.prompts import ChatPromptTemplate
 import logging
 
@@ -18,7 +18,7 @@ def create_comprehensive_strategy(
     policy_output: str,
     financial_output: str,
     tax_output: str,
-    llm: ChatOpenAI
+    llm: ChatBedrock
 ) -> Dict[str, Any]:
     """Create comprehensive purchase strategy by coordinating all agent outputs.
 

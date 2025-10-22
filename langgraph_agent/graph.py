@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from typing import TypedDict, Annotated, Dict, Any
 import operator
 from langgraph.graph import Graph, StateGraph, END
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from common.tools import BraveSearchTool, RealEstateCalculator, TaxCalculator, PolicyAnalyzer
 from common.config import get_settings
 from .agents.researcher import research_real_estate_info
@@ -42,11 +42,15 @@ def create_real_estate_graph() -> StateGraph:
     """
     settings = get_settings()
 
-    # Initialize LLM
-    llm = ChatOpenAI(
-        model=settings.openai_model,
-        temperature=0.1,
-        api_key=settings.openai_api_key
+    # Initialize LLM (Amazon Bedrock Claude)
+    llm = ChatBedrock(
+        model_id=settings.bedrock_model_id,
+        region_name=settings.aws_region,
+        credentials_profile_name=None,  # Use environment variables
+        model_kwargs={
+            "temperature": 0.1,
+            "max_tokens": 4096
+        }
     )
 
     # Initialize tools

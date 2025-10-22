@@ -22,6 +22,11 @@
 - Model ID: `us.anthropic.claude-3-7-sonnet-20250219-v1:0`
 - Region: `us-east-1`
 
+> **📢 구현 현황**:
+> - ✅ **LangGraph**: Amazon Bedrock Claude 3.7 완전 전환 완료
+> - ⏳ **Crew.ai**: 향후 Bedrock 전환 예정
+> - ⏳ **Strands Agents**: 향후 Bedrock 전환 예정
+
 ## 🚀 Quick Start
 
 ### 1. API Keys 설정 (필수)
