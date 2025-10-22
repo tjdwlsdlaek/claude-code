@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain.tools import Tool
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_policy_analyst_agent(llm: ChatOpenAI, policy_analyzer: PolicyAnalyzer) -> AgentExecutor:
+def create_policy_analyst_agent(llm: ChatBedrock, policy_analyzer: PolicyAnalyzer) -> AgentExecutor:
     """Create a policy analyst agent.
 
     Args:
@@ -109,7 +109,7 @@ def create_policy_analyst_agent(llm: ChatOpenAI, policy_analyzer: PolicyAnalyzer
 def analyze_policy(
     user_query: Dict[str, Any],
     research_output: str,
-    llm: ChatOpenAI,
+    llm: ChatBedrock,
     policy_analyzer: PolicyAnalyzer
 ) -> Dict[str, Any]:
     """Analyze policies based on research output.

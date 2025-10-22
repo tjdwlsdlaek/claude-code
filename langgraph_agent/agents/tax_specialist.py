@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain.tools import Tool
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_tax_specialist_agent(llm: ChatOpenAI, tax_calculator: TaxCalculator) -> AgentExecutor:
+def create_tax_specialist_agent(llm: ChatBedrock, tax_calculator: TaxCalculator) -> AgentExecutor:
     """Create a tax specialist agent.
 
     Args:
@@ -202,7 +202,7 @@ def create_tax_specialist_agent(llm: ChatOpenAI, tax_calculator: TaxCalculator) 
 def calculate_taxes(
     user_query: Dict[str, Any],
     policy_analysis: str,
-    llm: ChatOpenAI,
+    llm: ChatBedrock,
     tax_calculator: TaxCalculator
 ) -> Dict[str, Any]:
     """Calculate all taxes.

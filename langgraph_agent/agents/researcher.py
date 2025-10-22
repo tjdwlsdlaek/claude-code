@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from typing import Dict, Any, List
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain.tools import Tool
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_researcher_agent(llm: ChatOpenAI, brave_search: BraveSearchTool) -> AgentExecutor:
+def create_researcher_agent(llm: ChatBedrock, brave_search: BraveSearchTool) -> AgentExecutor:
     """Create a research agent for gathering real estate information.
 
     Args:
@@ -142,7 +142,7 @@ def create_researcher_agent(llm: ChatOpenAI, brave_search: BraveSearchTool) -> A
 
 def research_real_estate_info(
     user_query: Dict[str, Any],
-    llm: ChatOpenAI,
+    llm: ChatBedrock,
     brave_search: BraveSearchTool
 ) -> Dict[str, Any]:
     """Execute research for real estate information.

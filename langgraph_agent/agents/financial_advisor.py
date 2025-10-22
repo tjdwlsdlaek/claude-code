@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain.tools import Tool
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_financial_advisor_agent(llm: ChatOpenAI, calculator: RealEstateCalculator) -> AgentExecutor:
+def create_financial_advisor_agent(llm: ChatBedrock, calculator: RealEstateCalculator) -> AgentExecutor:
     """Create a financial advisor agent.
 
     Args:
@@ -170,7 +170,7 @@ def create_financial_advisor_agent(llm: ChatOpenAI, calculator: RealEstateCalcul
 def calculate_financial_plan(
     user_query: Dict[str, Any],
     policy_analysis: str,
-    llm: ChatOpenAI,
+    llm: ChatBedrock,
     calculator: RealEstateCalculator
 ) -> Dict[str, Any]:
     """Calculate financial plan.
