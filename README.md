@@ -1,5 +1,8 @@
 # AI Agent Frameworks Comparison: Real Estate Policy Advisor
 
+> ⚠️ **중요**: 이 프로젝트는 **Amazon Bedrock Claude Sonnet 3.7**을 사용합니다.
+> API Key 설정 방법은 **[SETUP.md](SETUP.md)**를 먼저 확인하세요!
+
 이 프로젝트는 **LangGraph**, **Crew.ai**, **Strands Agents** 3개의 AI 에이전트 프레임워크를 실제 애플리케이션을 통해 비교 분석합니다.
 
 ## 📋 프로젝트 개요
@@ -14,6 +17,84 @@
 - 부동산 중개수수료 계산
 - 청약 자격 분석
 - 종합 주택 구매 전략 제시
+
+**사용 LLM**: Amazon Bedrock Claude Sonnet 3.7
+- Model ID: `us.anthropic.claude-3-7-sonnet-20250219-v1:0`
+- Region: `us-east-1`
+
+## 🚀 Quick Start
+
+### 1. API Keys 설정 (필수)
+
+**⚠️ Public Repository이므로 export 방식으로 설정합니다**
+
+```bash
+# AWS Bedrock 자격 증명
+export AWS_ACCESS_KEY_ID="your_aws_access_key_id"
+export AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
+export AWS_REGION="us-east-1"
+export BEDROCK_MODEL_ID="us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+
+# Brave Search API
+export BRAVE_SEARCH_API_KEY="your_brave_search_api_key"
+
+# 애플리케이션 설정 (선택)
+export APP_PORT=8000
+export LOG_LEVEL="INFO"
+```
+
+상세한 설정 방법은 **[SETUP.md](SETUP.md)** 참고
+
+### 2. 의존성 설치
+
+```bash
+# 가상환경 생성 (권장)
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 공통 의존성 설치
+pip install -r requirements.txt
+
+# 특정 프레임워크 의존성 설치
+pip install -r langgraph_agent/requirements.txt  # LangGraph
+pip install -r crewai_agent/requirements.txt     # Crew.ai
+pip install -r strands_agent/requirements.txt    # Strands
+```
+
+### 3. 실행
+
+#### LangGraph 실행
+```bash
+cd langgraph_agent
+python app.py
+# http://localhost:8000
+```
+
+#### Crew.ai 실행
+```bash
+cd crewai_agent
+python app.py
+# http://localhost:8001
+```
+
+#### Strands Agents 실행
+```bash
+cd strands_agent
+python app.py
+# http://localhost:8002
+```
+
+### 4. Docker로 실행
+
+```bash
+# 모든 프레임워크 동시 실행
+docker-compose up
+
+# 개별 실행
+docker-compose up langgraph  # http://localhost:8000
+docker-compose up crewai     # http://localhost:8001
+docker-compose up strands    # http://localhost:8002
+```
 
 ## 🏗️ 아키텍처
 
@@ -37,10 +118,11 @@
         │  - Real Estate Calculator             │
         │  - Policy Analyzer                    │
         │  - Tax Calculator                     │
-        └───────────────────────────────────────┘
+        └───────────────────┬───────────────────┘
                             │
         ┌───────────────────▼───────────────────┐
-        │          Amazon ECS Deployment        │
+        │       Amazon Bedrock Claude 3.7       │
+        │      (us.anthropic.claude-3-7...)     │
         └───────────────────────────────────────┘
 ```
 
@@ -74,170 +156,210 @@
    - 단계별 실행 전략 수립
    - 리스크 평가
 
-## 📁 프로젝트 구조
+## 📝 사용 예시
 
-```
-.
-├── README.md
-├── requirements.txt
-├── .env.example
-├── docker-compose.yml
-│
-├── common/                          # 공통 모듈
-│   ├── tools/                       # 공통 도구
-│   │   ├── brave_search.py         # Brave Search API 클라이언트
-│   │   ├── real_estate_calculator.py  # 부동산 계산기
-│   │   ├── tax_calculator.py       # 세금 계산기
-│   │   └── policy_analyzer.py      # 정책 분석 도구
-│   ├── models/                      # 데이터 모델
-│   │   └── schemas.py
-│   └── config.py
-│
-├── langgraph_agent/                 # LangGraph 구현
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── graph.py
-│   ├── agents/
-│   └── requirements.txt
-│
-├── crewai_agent/                    # Crew.ai 구현
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── crew.py
-│   ├── agents/
-│   ├── tasks/
-│   └── requirements.txt
-│
-├── strands_agent/                   # Strands Agents 구현
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── workflow.py
-│   ├── agents/
-│   └── requirements.txt
-│
-├── ecs/                             # Amazon ECS 배포 설정
-│   ├── task-definition-langgraph.json
-│   ├── task-definition-crewai.json
-│   ├── task-definition-strands.json
-│   └── deploy.sh
-│
-└── docs/                            # 문서
-    ├── comparison.md                # 프레임워크 비교 분석
-    ├── architecture.md              # 아키텍처 설명
-    └── deployment.md                # 배포 가이드
-```
-
-## 🚀 Quick Start
-
-### 환경 설정
+### API 호출
 
 ```bash
-# 환경 변수 설정
-cp .env.example .env
-# .env 파일을 편집하여 API 키 입력
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 35,
+    "annual_income": 70000000,
+    "savings": 100000000,
+    "target_region": "서울 강남구",
+    "target_price_min": 300000000,
+    "target_price_max": 400000000,
+    "additional_info": "생애최초 구매"
+  }'
 ```
 
-### 로컬 실행
+### 예상 응답
 
-#### LangGraph
-```bash
-cd langgraph_agent
-pip install -r requirements.txt
-python app.py
+```json
+{
+  "framework": "langgraph",
+  "strategy": "# 30대를 위한 주택 구매 종합 전략\n\n## 1. 전략 요약\n...",
+  "execution_time_seconds": 45.2,
+  "user_query": {...},
+  "errors": [],
+  "intermediate_outputs": {
+    "research": "...",
+    "policy": "...",
+    "financial": "...",
+    "tax": "..."
+  }
+}
 ```
 
-#### Crew.ai
+## 🔑 필요한 API 키
+
+| 항목 | 설명 | 획득 방법 |
+|------|------|-----------|
+| **AWS Access Key** | Bedrock 접근용 | [SETUP.md](SETUP.md#1-aws-bedrock-자격-증명) |
+| **AWS Secret Key** | Bedrock 접근용 | 위와 동일 |
+| **Brave Search API** | 웹 검색용 | https://brave.com/search/api/ |
+
+**중요**: 모든 API Key는 export 명령어로 설정합니다. .env 파일을 사용할 수도 있지만, **절대로 git에 commit하지 마세요!**
+
+## 📊 프레임워크 비교
+
+| 프레임워크 | 학습 난이도 | 개발 속도 | 성능 | 확장성 | 추천 용도 |
+|-----------|------------|----------|------|--------|----------|
+| **LangGraph** | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 복잡한 엔터프라이즈 시스템 |
+| **Crew.ai** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | 빠른 프로토타입/MVP |
+| **Strands** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | 성능 중심 단순 워크플로우 |
+
+상세한 비교 분석은 [docs/comparison.md](docs/comparison.md) 참고
+
+## 🐳 Docker 배포
+
+### 로컬 Docker
+
 ```bash
-cd crewai_agent
-pip install -r requirements.txt
-python app.py
-```
+# 빌드 및 실행
+docker-compose up --build
 
-#### Strands Agents
-```bash
-cd strands_agent
-pip install -r requirements.txt
-python app.py
-```
-
-### Docker 실행
-
-```bash
-# 전체 실행
-docker-compose up
-
-# 개별 실행
-docker-compose up langgraph
-docker-compose up crewai
-docker-compose up strands
+# 백그라운드 실행
+docker-compose up -d
 ```
 
 ### AWS ECS 배포
 
 ```bash
 cd ecs
-./deploy.sh <framework-name>
-# framework-name: langgraph, crewai, strands
+
+# 환경 변수 설정
+export AWS_ACCOUNT_ID=123456789012
+export AWS_REGION=us-east-1
+
+# 전체 배포
+./deploy.sh all
+
+# 개별 배포
+./deploy.sh langgraph
+./deploy.sh crewai
+./deploy.sh strands
 ```
 
-## 🔑 필요한 API 키
+상세한 배포 가이드는 [docs/deployment.md](docs/deployment.md) 참고
 
-- **OpenAI API Key**: GPT-4 사용
-- **Brave Search API Key**: 웹 검색 기능
-- **AWS Credentials**: ECS 배포용
+## 📁 프로젝트 구조
 
-## 📊 비교 분석 항목
-
-1. **개발 경험**
-   - 코드 복잡도
-   - 학습 곡선
-   - 디버깅 용이성
-
-2. **성능**
-   - 응답 시간
-   - 리소스 사용량
-   - 확장성
-
-3. **기능**
-   - 에이전트 간 협업
-   - 상태 관리
-   - 에러 처리
-
-4. **운영**
-   - 모니터링
-   - 로깅
-   - 배포 복잡도
-
-자세한 비교 분석은 [docs/comparison.md](docs/comparison.md)를 참고하세요.
+```
+.
+├── README.md                   # 이 파일
+├── SETUP.md                    # API Key 설정 가이드 (필독!)
+├── requirements.txt            # 공통 의존성
+├── .env.example               # 환경 변수 예시
+├── docker-compose.yml         # Docker Compose 설정
+│
+├── common/                    # 공통 모듈
+│   ├── tools/                 # 공통 도구
+│   │   ├── brave_search.py
+│   │   ├── real_estate_calculator.py
+│   │   ├── tax_calculator.py
+│   │   └── policy_analyzer.py
+│   ├── models/schemas.py
+│   ├── config.py
+│   └── bedrock_client.py      # Bedrock 클라이언트
+│
+├── langgraph_agent/           # LangGraph 구현
+│   ├── Dockerfile
+│   ├── app.py
+│   ├── graph.py
+│   └── agents/
+│
+├── crewai_agent/              # Crew.ai 구현
+│   ├── Dockerfile
+│   ├── app.py
+│   ├── crew.py
+│   ├── agents/
+│   └── tasks/
+│
+├── strands_agent/             # Strands 구현
+│   ├── Dockerfile
+│   ├── app.py
+│   ├── workflow.py
+│   └── agents/
+│
+├── ecs/                       # AWS ECS 배포
+│   ├── deploy.sh
+│   └── task-definition-*.json
+│
+└── docs/                      # 문서
+    ├── comparison.md          # 프레임워크 비교
+    ├── architecture.md        # 아키텍처 설명
+    └── deployment.md          # 배포 가이드
+```
 
 ## 🛠️ 기술 스택
 
-- **AI Frameworks**: LangGraph, Crew.ai, Strands Agents
-- **LLM**: OpenAI GPT-4
+- **AI Framework**: LangGraph, Crew.ai, Custom Strands Pattern
+- **LLM**: Amazon Bedrock Claude Sonnet 3.7
 - **Search**: Brave Search API
 - **Language**: Python 3.11+
-- **Container**: Docker
-- **Orchestration**: Amazon ECS
-- **Infrastructure**: AWS (ECS, ECR, VPC)
+- **Web Framework**: FastAPI
+- **Container**: Docker & Docker Compose
+- **Cloud**: AWS (Bedrock, ECS, ECR, Secrets Manager)
 
-## 📝 사용 예시
+## 🧪 테스트
 
-```python
-# 사용자 쿼리 예시
-query = """
-30대 직장인입니다. 연봉 7천만원, 현재 예금 1억원 보유.
-서울 강남구에 3억~4억대 아파트 구매를 고려 중입니다.
-현재 부동산 규제와 대출 가능 여부, 그리고 구매 전략을 알려주세요.
-"""
+```bash
+# 헬스 체크
+curl http://localhost:8000/health
 
-# 각 프레임워크의 응답에는 다음이 포함됩니다:
-# 1. 현재 적용되는 부동산 규제 (투기과열지구, LTV/DTI 규제 등)
-# 2. 대출 가능 금액 계산 (DSR 고려)
-# 3. 예상 세금 (취득세, 재산세)
-# 4. 중개수수료 계산
-# 5. 단계별 구매 전략
-# 6. 리스크 및 주의사항
+# 테스트 엔드포인트
+curl -X POST http://localhost:8000/test
+
+# 실제 분석 요청
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d @example_query.json
 ```
+
+## 📚 문서
+
+- **[SETUP.md](SETUP.md)**: API Key 설정 가이드 (필독!)
+- **[docs/comparison.md](docs/comparison.md)**: 프레임워크 상세 비교
+- **[docs/architecture.md](docs/architecture.md)**: 시스템 아키텍처
+- **[docs/deployment.md](docs/deployment.md)**: 배포 가이드
+
+## 🔒 보안 주의사항
+
+**⚠️ 이 Repository는 Public입니다!**
+
+- ❌ API Key를 코드에 절대 포함하지 마세요
+- ❌ .env 파일을 git에 commit하지 마세요
+- ✅ 항상 export 명령어로 환경 변수 설정
+- ✅ .gitignore에 .env가 포함되어 있는지 확인
+- ✅ commit 전에 git status로 확인
+- ✅ AWS IAM에서 최소 권한 원칙 적용
+
+## 🆘 문제 해결
+
+### AWS Credentials 오류
+
+```bash
+# 환경 변수 확인
+env | grep AWS
+
+# AWS CLI 테스트
+aws bedrock list-foundation-models --region us-east-1
+```
+
+### Bedrock 모델 접근 오류
+
+AWS Console → Bedrock → Model access에서 Claude 3.7 모델 활성화 필요
+
+### 의존성 오류
+
+```bash
+pip install --upgrade -r requirements.txt
+pip install --upgrade boto3 langchain-aws
+```
+
+더 많은 문제 해결 방법은 [docs/deployment.md#트러블슈팅](docs/deployment.md#트러블슈팅) 참고
 
 ## 📄 라이선스
 
@@ -247,6 +369,15 @@ MIT License
 
 Issues와 Pull Requests를 환영합니다.
 
+**기여 시 주의사항**:
+- API Key가 포함되지 않았는지 확인
+- .env 파일이 commit되지 않았는지 확인
+- 코드 리뷰 전에 보안 체크
+
 ## 📞 문의
 
 프로젝트 관련 문의사항은 Issues를 통해 등록해주세요.
+
+---
+
+**시작하기**: [SETUP.md](SETUP.md) → 환경 설정 → Quick Start 실행
