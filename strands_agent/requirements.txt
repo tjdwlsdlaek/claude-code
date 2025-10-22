@@ -1,0 +1,14 @@
+# Note: Strands Agents is not a widely known public framework
+# This implementation uses a custom agent orchestration pattern
+# inspired by agent-based architectures
+
+# Base dependencies
+-r ../requirements.txt
+
+# Web framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# Additional async support
+asyncio>=3.4.3
+aiohttp>=3.9.0
